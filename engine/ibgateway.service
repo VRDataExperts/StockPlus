@@ -1,0 +1,15 @@
+[Unit]
+Description=IB Gateway via IBC (paper trading)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Runs IB Gateway headless using a virtual display (Xvfb).
+# Credentials are read from /opt/ibc/config/config.ini (NOT committed to git).
+ExecStart=/usr/bin/xvfb-run -a /opt/ibc/scripts/ibcstart.sh --gateway --mode=paper
+Restart=always
+RestartSec=30
+User=root
+
+[Install]
+WantedBy=multi-user.target
