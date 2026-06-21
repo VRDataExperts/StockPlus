@@ -1,80 +1,81 @@
 """
-Finnhub -> Supabase news ingestion.
+Finnhub -> Supabase news ingestion, with a simple sentiment score.
 
-Pulls general market news + company news for your watchlist and stores them
-in the `news_items` table (deduplicated). Free Finnhub tier is enough for this.
+Pulls general market news + company news for the watchlist, scores each headline
+-1..+1 with a small keyword lexicon, and stores them (deduplicated).
 
 Run:
     python engine/news_ingest.py
 """
 from __future__ import annotations
 import datetime as dt
+import re
 import sys
 import requests
 
 import config
-import db
 
 BASE = "https://finnhub.io/api/v1"
+WATCHLIST = ["AAPL", "MSFT", "NVDA", "SPY", "AMZN", "GOOGL", "META", "TSLA", "JPM"]
 
-# Edit this watchlist freely (US + Canadian tickers). For Canadian names on
-# Finnhub use the .TO suffix, e.g. "SHOP.TO", "RY.TO".
-WATCHLIST = ["AAPL", "MSFT", "NVDA", "SPY", "SHOP.TO", "RY.TO"]
+POS = {"beat", "beats", "surge", "surges", "soar", "rally", "record", "growth", "upgrade",
+       "strong", "gain", "gains", "jump", "jumps", "profit", "wins", "boost", "raises",
+       "outperform", "bullish", "tops", "rises", "expand", "approve", "approved"}
+NEG = {"miss", "misses", "plunge", "plunges", "drop", "drops", "fall", "falls", "cut",
+       "cuts", "downgrade", "weak", "loss", "losses", "lawsuit", "probe", "decline",
+       "slump", "warns", "warning", "bearish", "slashes", "fraud", "recall", "sinks"}
 
 
-def _get(path: str, params: dict) -> list | dict:
+def score_sentiment(text: str) -> float:
+    words = re.findall(r"[a-z]+", (text or "").lower())
+    p = sum(w in POS for w in words)
+    n = sum(w in NEG for w in words)
+    return round((p - n) / (p + n), 3) if (p + n) else 0.0
+
+
+def _get(path, params):
     params = {**params, "token": config.FINNHUB_API_KEY}
     r = requests.get(f"{BASE}{path}", params=params, timeout=20)
     if r.status_code != 200:
-        # 403 = symbol not allowed on the free tier (e.g. Canadian .TO names);
-        # 429 = rate limited. Skip gracefully instead of crashing the run.
-        sym = params.get("symbol", "")
-        print(f"  Finnhub {r.status_code} for {path} {sym} — skipping.")
+        print(f"  Finnhub {r.status_code} for {path} {params.get('symbol','')} - skipping.")
         return []
     return r.json()
 
 
-def fetch_general() -> list[dict]:
-    data = _get("/news", {"category": "general"})
-    return [_norm("finnhub", a, tickers=None) for a in (data or [])]
+def fetch_general():
+    return [_norm(a, None) for a in (_get("/news", {"category": "general"}) or [])]
 
 
-def fetch_company(ticker: str) -> list[dict]:
+def fetch_company(ticker):
     today = dt.date.today()
     frm = (today - dt.timedelta(days=3)).isoformat()
     data = _get("/company-news", {"symbol": ticker, "from": frm, "to": today.isoformat()})
-    return [_norm("finnhub", a, tickers=[ticker]) for a in (data or [])]
+    return [_norm(a, [ticker]) for a in (data or [])]
 
 
-def _norm(provider: str, a: dict, tickers: list[str] | None) -> dict:
-    published = a.get("datetime")
-    published_at = (
-        dt.datetime.fromtimestamp(published, dt.timezone.utc).isoformat()
-        if published else None
-    )
+def _norm(a, tickers):
+    ts = a.get("datetime")
+    published_at = dt.datetime.fromtimestamp(ts, dt.timezone.utc).isoformat() if ts else None
+    headline = (a.get("headline") or "").strip()[:1000]
     return {
-        "provider": provider,
-        "headline": (a.get("headline") or "").strip()[:1000],
+        "provider": "finnhub",
+        "headline": headline,
         "url": a.get("url"),
         "tickers": tickers,
-        "sentiment": None,  # free tier has no sentiment; we can add later
+        "sentiment": score_sentiment(headline),
         "published_at": published_at,
         "external_id": str(a.get("id") or a.get("url")),
     }
 
 
-def main() -> None:
+def main():
     config.require("FINNHUB_API_KEY", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
+    import db
     client = db.get_client()
-
-    rows: list[dict] = []
-    print("Fetching general market news...")
-    rows += fetch_general()
+    rows = fetch_general()
     for t in WATCHLIST:
         print(f"Fetching company news for {t}...")
         rows += fetch_company(t)
-
-    # drop rows with no usable id/headline
     rows = [r for r in rows if r["headline"] and r["external_id"]]
     inserted = db.insert_news(client, rows)
     db.log(client, "news_ingest", "fetch", {"fetched": len(rows), "inserted": inserted})
