@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --line:#30363d; --text:#e6edf3;
+          --muted:#8b949e; --green:#3fb950; --red:#f85149; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+         background:var(--bg); color:var(--text); }
+  header { padding:18px 24px; border-bottom:1px solid var(--line);
+           display:flex; align-items:center; gap:16px; }
+  header h1 { font-size:18px; margin:0; }
+  header .sub { color:var(--muted); font-size:13px; }
+  button { background:var(--panel); color:var(--text); border:1px solid var(--line);
+           border-radius:6px; padding:6px 12px; cursor:pointer; font-size:13px; }
+  button:hover { border-color:var(--accent); }
+  .tabs { display:flex; gap:8px; padding:14px 24px 0; }
+  .tab { padding:8px 14px; border-radius:6px 6px 0 0; cursor:pointer; color:var(--muted); }
+  .tab.active { color:var(--text); background:var(--panel); border:1px solid var(--line); border-bottom:none; }
+  main { padding:20px 24px; }
+  .controls { display:flex; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+  select { background:var(--panel); color:var(--text); border:1px solid var(--line);
+           border-radius:6px; padding:6px 10px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:right; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){ text-align:left; }
+  th { color:var(--muted); font-weight:600; cursor:pointer; user-select:none; }
+  tbody tr { cursor:pointer; }
+  tbody tr:hover { background:#1c2330; }
+  tbody tr.sel { background:#22304a; }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; margin-top:18px; }
+  .news-item { padding:10px 0; border-bottom:1px solid var(--line); }
+  .news-item a { color:var(--accent); text-decoration:none; }
+  .news-item a:hover { text-decoration:underline; }
+  .news-meta { color:var(--muted); font-size:12px; margin-top:3px; }
+  .tag { display:inline-block; background:#21262d; border-radius:4px; padding:1px 6px; margin-right:4px; font-size:11px; }
+  .hidden { display:none; }
+  .empty { color:var(--muted); padding:30px; text-align:center; }
+  .warn { background:#3d2b00; border:1px solid #9e6a00; color:#f0c674; padding:12px 16px; border-radius:8px; margin:20px 24px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📈 StocksPlus</h1>
+  <span class="sub">strategy backtests &amp; market news · paper research</span>
+  <span style="flex:1"></span>
+  <button id="refresh">↻ Refresh</button>
+</header>
+
+<div id="config-warn" class="warn hidden"></div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="backtests">Backtests</div>
+  <div class="tab" data-tab="news">News</div>
+</div>
+
+<main>
+  <!-- BACKTESTS -->
+  <section id="tab-backtests">
+    <div class="controls">
+      <label>Period
+        <select id="period"></select>
+      </label>
+      <label>Ticker
+        <select id="ticker"></select>
+      </label>
+      <span class="sub" style="color:var(--muted)">Click a row to chart its equity curve.</span>
+    </div>
+    <table id="bt-table">
+      <thead><tr>
+        <th data-k="ticker">Ticker</th>
+        <th data-k="strategy">Strategy</th>
+        <th data-k="total_return">Return</th>
+        <th data-k="bh_total_return">Buy&amp;Hold</th>
+        <th data-k="max_drawdown">Max DD</th>
+        <th data-k="sharpe">Sharpe</th>
+        <th data-k="trades">Trades</th>
+        <th data-k="time_in_market">In mkt</th>
+      </tr></thead>
+      <tbody id="bt-body"></tbody>
+    </table>
+    <div id="bt-empty" class="empty hidden">No backtests yet. Run <code>python engine/compare.py</code> to populate this.</div>
+
+    <div class="panel">
+      <div id="chart-title" class="sub" style="color:var(--muted);margin-bottom:8px">Select a row above to see its equity curve.</div>
+      <canvas id="curve" height="110"></canvas>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section id="tab-news" class="hidden">
+    <div id="news-list"></div>
+    <div id="news-empty" class="empty hidden">No news yet. Run <code>python engine/news_ingest.py</code>.</div>
+  </section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// ====== FILL THESE IN (Supabase -> Project Settings -> API) ======
+// The anon (public) key is safe to expose; Row Level Security limits it to reads.
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+// =================================================================
+
+const fmtPct = v => (v==null? '—' : (v*100).toFixed(1)+'%');
+const cls = v => v>0 ? 'pos' : (v<0 ? 'neg':'');
+
+const warn = document.getElementById('config-warn');
+let sb = null;
+if (SUPABASE_URL.startsWith('YOUR_') || SUPABASE_ANON_KEY.startsWith('YOUR_')) {
+  warn.classList.remove('hidden');
+  warn.textContent = 'Set SUPABASE_URL and SUPABASE_ANON_KEY at the top of index.html (Supabase → Project Settings → API), then redeploy.';
+} else {
+  sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+let allRows = [], sort = {k:'total_return', dir:-1}, chart = null;
+
+// ---------- tabs ----------
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab = t.dataset.tab;
+  document.getElementById('tab-backtests').classList.toggle('hidden', tab!=='backtests');
+  document.getElementById('tab-news').classList.toggle('hidden', tab!=='news');
+  if (tab==='news') loadNews();
+});
+
+document.getElementById('refresh').onclick = () => { loadBacktests(); };
+document.getElementById('period').onchange = renderTable;
+document.getElementById('ticker').onchange = renderTable;
+document.querySelectorAll('#bt-table th').forEach(th => th.onclick = () => {
+  const k = th.dataset.k;
+  sort = {k, dir: sort.k===k ? -sort.dir : -1};
+  renderTable();
+});
+
+// ---------- backtests ----------
+async function loadBacktests() {
+  if (!sb) return;
+  const { data, error } = await sb.from('backtests')
+    .select('*').order('run_at', {ascending:false}).limit(1000);
+  if (error) { console.error(error); return; }
+  // keep newest row per (strategy,ticker,period)
+  const seen = new Set(); allRows = [];
+  for (const r of data) {
+    const key = r.strategy+'|'+r.ticker+'|'+r.period_label;
+    if (!seen.has(key)) { seen.add(key); allRows.push(r); }
+  }
+  // populate filters
+  fillSelect('period', [...new Set(allRows.map(r=>r.period_label))]);
+  fillSelect('ticker', [...new Set(allRows.map(r=>r.ticker))]);
+  renderTable();
+}
+
+function fillSelect(id, vals) {
+  const el = document.getElementById(id);
+  const cur = el.value;
+  el.innerHTML = '<option value="">All</option>' + vals.map(v=>`<option>${v}</option>`).join('');
+  if ([...el.options].some(o=>o.value===cur)) el.value = cur;
+}
+
+function renderTable() {
+  const p = document.getElementById('period').value;
+  const t = document.getElementById('ticker').value;
+  let rows = allRows.filter(r => (!p||r.period_label===p) && (!t||r.ticker===t));
+  rows.sort((a,b)=> (a[sort.k]>b[sort.k]?1:-1)*sort.dir);
+  const body = document.getElementById('bt-body');
+  document.getElementById('bt-empty').classList.toggle('hidden', rows.length>0);
+  body.innerHTML = rows.map(r => `
+    <tr data-id="${r.id}">
+      <td>${r.ticker}</td><td>${r.strategy}</td>
+      <td class="${cls(r.total_return)}">${fmtPct(r.total_return)}</td>
+      <td>${fmtPct(r.bh_total_return)}</td>
+      <td class="neg">${fmtPct(r.max_drawdown)}</td>
+      <td>${r.sharpe==null?'—':r.sharpe.toFixed(2)}</td>
+      <td>${r.trades??'—'}</td>
+      <td>${fmtPct(r.time_in_market)}</td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr => tr.onclick = () => {
+    body.querySelectorAll('tr').forEach(x=>x.classList.remove('sel'));
+    tr.classList.add('sel');
+    loadCurve(+tr.dataset.id, rows.find(r=>r.id==tr.dataset.id));
+  });
+}
+
+async function loadCurve(id, row) {
+  if (!sb) return;
+  const { data, error } = await sb.from('backtest_curves')
+    .select('points').eq('backtest_id', id).single();
+  if (error || !data) { console.error(error); return; }
+  const pts = data.points;
+  document.getElementById('chart-title').textContent =
+    `${row.ticker} · ${row.strategy} · ${row.period_label} — strategy vs buy & hold (growth of $1)`;
+  const labels = pts.map(p=>p.t);
+  if (chart) chart.destroy();
+  chart = new Chart(document.getElementById('curve'), {
+    type:'line',
+    data:{ labels, datasets:[
+      {label:'Strategy', data:pts.map(p=>p.strat), borderColor:'#58a6ff', borderWidth:2, pointRadius:0, tension:.1},
+      {label:'Buy & Hold', data:pts.map(p=>p.bh), borderColor:'#8b949e', borderWidth:1.5, borderDash:[5,4], pointRadius:0, tension:.1},
+    ]},
+    options:{ responsive:true, plugins:{legend:{labels:{color:'#e6edf3'}}},
+      scales:{ x:{ticks:{color:'#8b949e',maxTicksLimit:8}, grid:{color:'#21262d'}},
+               y:{ticks:{color:'#8b949e'}, grid:{color:'#21262d'}} } }
+  });
+}
+
+// ---------- news ----------
+async function loadNews() {
+  if (!sb) return;
+  const { data, error } = await sb.from('news_items')
+    .select('*').order('published_at', {ascending:false}).limit(60);
+  if (error) { console.error(error); return; }
+  document.getElementById('news-empty').classList.toggle('hidden', (data||[]).length>0);
+  document.getElementById('news-list').innerHTML = (data||[]).map(n => `
+    <div class="news-item">
+      <a href="${n.url||'#'}" target="_blank" rel="noopener">${n.headline}</a>
+      <div class="news-meta">
+        ${(n.tickers||[]).map(t=>`<span class="tag">${t}</span>`).join('')}
+        ${n.provider} · ${n.published_at ? new Date(n.published_at).toLocaleString() : ''}
+      </div>
+    </div>`).join('');
+}
+
+loadBacktests();
+</script>
+</body>
+</html>
