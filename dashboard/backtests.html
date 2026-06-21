@@ -23,10 +23,14 @@
     <span class="sub" style="color:var(--muted)">Click a row to chart its equity curve.</span>
   </div>
   <table id="bt-table"><thead><tr>
-    <th data-k="ticker">Ticker</th><th data-k="strategy">Strategy</th>
-    <th data-k="total_return">Return</th><th data-k="bh_total_return">Buy&amp;Hold</th>
-    <th data-k="max_drawdown">Max DD</th><th data-k="sharpe">Sharpe</th>
-    <th data-k="trades">Trades</th><th data-k="time_in_market">In mkt</th>
+    <th data-k="ticker" title="Stock symbol (.TO = Canadian/TSX)">Ticker</th>
+    <th data-k="strategy" title="Which rule was tested">Strategy</th>
+    <th data-k="total_return" title="Total % gain/loss if you'd followed this strategy over the period">Return</th>
+    <th data-k="bh_total_return" title="What you'd have made just buying and holding the stock (benchmark)">Buy&amp;Hold</th>
+    <th data-k="max_drawdown" title="Worst drop from a peak — the pain/risk measure">Max DD</th>
+    <th data-k="sharpe" title="Return per unit of risk; above 1 is good, higher is smoother">Sharpe</th>
+    <th data-k="trades" title="Number of buy/sell round-trips (more = more fees)">Trades</th>
+    <th data-k="time_in_market" title="% of days holding the stock vs sitting in cash">In mkt</th>
   </tr></thead><tbody id="bt-body"></tbody></table>
   <div id="bt-empty" class="empty hidden">No backtests yet. Run <code>python engine/compare.py</code>.</div>
   <div class="panel">

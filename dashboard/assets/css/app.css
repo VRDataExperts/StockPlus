@@ -77,3 +77,18 @@ tbody tr.sel { background:#22304a; }
 .guide p, .guide li { line-height:1.55; }
 .guide ul { padding-left:20px; }
 .guide .tagline { color:var(--muted); font-size:13px; }
+
+/* hover-help cursor on tooltip headers */
+th[title], .help[title] { cursor: help; }
+
+/* click-to-chart modal */
+.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.65);
+  display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; }
+.modal { background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  max-width:860px; width:100%; max-height:92vh; overflow:auto; padding:22px; position:relative; }
+.modal-close { position:absolute; top:8px; right:12px; background:none; border:none;
+  color:var(--muted); font-size:24px; cursor:pointer; }
+.modal h3 { margin:0 0 2px; }
+.explain { margin:14px 0; }
+.explain p { line-height:1.5; margin:8px 0; }
+.explain strong { color:var(--text); }

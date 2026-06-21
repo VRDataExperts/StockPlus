@@ -1,6 +1,7 @@
 import { sb, fmtPct, cls } from './config.js';
+import { openTickerModal } from './modal.js';
 
-let all = [], sort = { k: 'score', dir: -1 };
+let all = [], view = [], sort = { k: 'score', dir: -1 };
 
 document.getElementById('refresh').onclick = () => load();
 ['f-strategy', 'f-fresh', 'f-strong'].forEach(id =>
@@ -39,22 +40,23 @@ function render() {
   const s = document.getElementById('f-strategy').value;
   const freshOnly = document.getElementById('f-fresh').checked;
   const strongOnly = document.getElementById('f-strong').checked;
-  let rows = all.filter(r =>
+  view = all.filter(r =>
     (!s || r.strategy === s) &&
     (!freshOnly || r.fresh) &&
     (!strongOnly || (r.strength_score != null && r.strength_score >= 65)));
-  rows.sort((a, b) => ((a[sort.k] ?? -1) > (b[sort.k] ?? -1) ? 1 : -1) * sort.dir);
-  document.getElementById('op-empty').classList.toggle('hidden', rows.length > 0);
-  document.getElementById('op-body').innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.ticker}</td>
-      <td>${r.strategy}</td>
+  view.sort((a, b) => ((a[sort.k] ?? -1) > (b[sort.k] ?? -1) ? 1 : -1) * sort.dir);
+  document.getElementById('op-empty').classList.toggle('hidden', view.length > 0);
+  document.getElementById('op-body').innerHTML = view.map((r, i) => `
+    <tr data-i="${i}">
+      <td>${r.ticker}</td><td>${r.strategy}</td>
       <td>${r.fresh ? '🟢 buy' : 'hold-long'}</td>
       <td class="${cls(r.score)}">${fmtPct(r.score)}</td>
       <td>${strengthCell(r.strength_score)}</td>
       <td>${moodCell(r.sentiment)}</td>
       <td>$${r.last_price ?? '—'}</td>
     </tr>`).join('');
+  document.querySelectorAll('#op-body tr').forEach(tr =>
+    tr.onclick = () => openTickerModal(view[+tr.dataset.i].ticker, view[+tr.dataset.i]));
 }
 
 load();

@@ -1,6 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StocksPlus — Opportunities</title><link rel="stylesheet" href="assets/css/app.css" /></head>
+<title>StocksPlus — Opportunities</title><link rel="stylesheet" href="assets/css/app.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
 <body>
 <header>
   <span class="brand">📈 StocksPlus</span>
@@ -22,10 +23,15 @@
     <label><input type="checkbox" id="f-strong" /> Strong companies only (score ≥ 65)</label>
     <span class="sub" id="run-info" style="color:var(--muted)"></span>
   </div>
+  <p class="sub" style="color:var(--muted);margin:-4px 0 10px">Click any row to open its chart and a plain-English read.</p>
   <table id="op-table"><thead><tr>
-    <th data-k="ticker">Ticker</th><th data-k="strategy">Strategy</th><th data-k="signal">Signal</th>
-    <th data-k="score">20d momentum</th><th data-k="strength_score">Strength</th>
-    <th data-k="sentiment">News mood</th><th data-k="last_price">Last price</th>
+    <th data-k="ticker" title="Stock symbol (.TO = Canadian/TSX)">Ticker</th>
+    <th data-k="strategy" title="Which rule produced this signal">Strategy</th>
+    <th data-k="signal" title="Buy = the rule just triggered an entry; Hold-long = already in an uptrend">Signal</th>
+    <th data-k="score" title="Price change over the last ~20 trading days (recent momentum)">20d momentum</th>
+    <th data-k="strength_score" title="Company quality score 0-100 from fundamentals (margins, ROE, growth, debt). Higher = stronger">Strength</th>
+    <th data-k="sentiment" title="Average sentiment of recent headlines, -1 (negative) to +1 (positive)">News mood</th>
+    <th data-k="last_price" title="Most recent price">Last price</th>
   </tr></thead><tbody id="op-body"></tbody></table>
   <div id="op-empty" class="empty hidden">No opportunities yet. Run <code>python engine/screen.py</code>.</div>
 </main>
