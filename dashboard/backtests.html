@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Backtests</title>
+<link rel="stylesheet" href="assets/css/app.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="backtests.html" class="active">Backtests</a>
+    <a href="news.html">News</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh">↻ Refresh</button>
+</header>
+
+<main>
+  <div class="controls">
+    <label>Period <select id="period"></select></label>
+    <label>Ticker <select id="ticker"></select></label>
+    <span class="sub" style="color:var(--muted)">Click a row to chart its equity curve.</span>
+  </div>
+
+  <table id="bt-table">
+    <thead><tr>
+      <th data-k="ticker">Ticker</th>
+      <th data-k="strategy">Strategy</th>
+      <th data-k="total_return">Return</th>
+      <th data-k="bh_total_return">Buy&amp;Hold</th>
+      <th data-k="max_drawdown">Max DD</th>
+      <th data-k="sharpe">Sharpe</th>
+      <th data-k="trades">Trades</th>
+      <th data-k="time_in_market">In mkt</th>
+    </tr></thead>
+    <tbody id="bt-body"></tbody>
+  </table>
+  <div id="bt-empty" class="empty hidden">No backtests yet. Run <code>python engine/compare.py</code>.</div>
+
+  <div class="panel">
+    <div id="chart-title" class="sub" style="color:var(--muted);margin-bottom:8px">
+      Select a row above to see its equity curve.
+    </div>
+    <canvas id="curve" height="110"></canvas>
+  </div>
+</main>
+
+<script type="module" src="assets/js/backtests.js"></script>
+</body>
+</html>

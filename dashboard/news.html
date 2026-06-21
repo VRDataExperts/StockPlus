@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — News</title>
+<link rel="stylesheet" href="assets/css/app.css" />
+</head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="backtests.html">Backtests</a>
+    <a href="news.html" class="active">News</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh">↻ Refresh</button>
+</header>
+
+<main>
+  <div id="news-list"></div>
+  <div id="news-empty" class="empty hidden">No news yet. Run <code>python engine/news_ingest.py</code>.</div>
+</main>
+
+<script type="module" src="assets/js/news.js"></script>
+</body>
+</html>
