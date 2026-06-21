@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Charts</title><link rel="stylesheet" href="assets/css/app.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="charts.html" class="active">Charts</a>
+    <a href="backtests.html">Backtests</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="news.html">News</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh">↻ Refresh</button>
+</header>
+<main>
+  <div class="controls">
+    <label>Ticker <select id="ticker"></select></label>
+    <label>Signals <select id="mstrat"></select></label>
+    <span class="sub" id="info" style="color:var(--muted)"></span>
+  </div>
+  <div class="panel"><canvas id="px" height="120"></canvas></div>
+  <div id="fund" class="cards" style="margin-top:18px"></div>
+  <div id="charts-empty" class="empty hidden">No chart data yet. Run <code>python engine/charts.py</code>.</div>
+</main>
+<script type="module" src="assets/js/charts.js"></script>
+</body></html>

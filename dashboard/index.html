@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StocksPlus — Overview</title>
-<link rel="stylesheet" href="assets/css/app.css" />
-</head>
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Overview</title><link rel="stylesheet" href="assets/css/app.css" /></head>
 <body>
 <header>
   <span class="brand">📈 StocksPlus</span>
   <nav>
     <a href="index.html" class="active">Overview</a>
+    <a href="charts.html">Charts</a>
     <a href="backtests.html">Backtests</a>
     <a href="opportunities.html">Opportunities</a>
     <a href="news.html">News</a>
@@ -24,14 +20,10 @@
     <div class="sub" style="color:var(--muted);margin-bottom:8px">
       Strategy leaderboard — averages across all tickers &amp; periods (sorted by Sharpe)
     </div>
-    <table>
-      <thead><tr>
-        <th>Strategy</th><th>Avg return</th><th>Avg Sharpe</th><th>Avg max DD</th><th>Runs</th>
-      </tr></thead>
-      <tbody id="board"></tbody>
-    </table>
+    <table><thead><tr>
+      <th>Strategy</th><th>Avg return</th><th>Avg Sharpe</th><th>Avg max DD</th><th>Runs</th>
+    </tr></thead><tbody id="board"></tbody></table>
   </div>
 </main>
 <script type="module" src="assets/js/overview.js"></script>
-</body>
-</html>
+</body></html>

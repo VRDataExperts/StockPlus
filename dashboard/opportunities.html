@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StocksPlus — Opportunities</title>
-<link rel="stylesheet" href="assets/css/app.css" />
-</head>
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Opportunities</title><link rel="stylesheet" href="assets/css/app.css" /></head>
 <body>
 <header>
   <span class="brand">📈 StocksPlus</span>
   <nav>
     <a href="index.html">Overview</a>
+    <a href="charts.html">Charts</a>
     <a href="backtests.html">Backtests</a>
     <a href="opportunities.html" class="active">Opportunities</a>
     <a href="news.html">News</a>
@@ -25,24 +21,12 @@
     <label><input type="checkbox" id="f-strong" /> Strong companies only (score ≥ 65)</label>
     <span class="sub" id="run-info" style="color:var(--muted)"></span>
   </div>
-  <table id="op-table">
-    <thead><tr>
-      <th data-k="ticker">Ticker</th>
-      <th data-k="strategy">Strategy</th>
-      <th data-k="signal">Signal</th>
-      <th data-k="score">20d momentum</th>
-      <th data-k="strength_score">Strength</th>
-      <th data-k="sentiment">News mood</th>
-      <th data-k="last_price">Last price</th>
-    </tr></thead>
-    <tbody id="op-body"></tbody>
-  </table>
+  <table id="op-table"><thead><tr>
+    <th data-k="ticker">Ticker</th><th data-k="strategy">Strategy</th><th data-k="signal">Signal</th>
+    <th data-k="score">20d momentum</th><th data-k="strength_score">Strength</th>
+    <th data-k="sentiment">News mood</th><th data-k="last_price">Last price</th>
+  </tr></thead><tbody id="op-body"></tbody></table>
   <div id="op-empty" class="empty hidden">No opportunities yet. Run <code>python engine/screen.py</code>.</div>
-  <p class="sub" style="color:var(--muted);margin-top:14px">
-    Strength = fundamentals quality score (0–100). News mood = avg sentiment of recent headlines (−1 to +1).
-    Idea generator, not advice — validate before trading.
-  </p>
 </main>
 <script type="module" src="assets/js/opportunities.js"></script>
-</body>
-</html>
+</body></html>
