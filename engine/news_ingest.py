@@ -25,10 +25,12 @@ WATCHLIST = ["AAPL", "MSFT", "NVDA", "SPY", "SHOP.TO", "RY.TO"]
 def _get(path: str, params: dict) -> list | dict:
     params = {**params, "token": config.FINNHUB_API_KEY}
     r = requests.get(f"{BASE}{path}", params=params, timeout=20)
-    if r.status_code == 429:
-        print("  Finnhub rate limit hit — slowing down.")
+    if r.status_code != 200:
+        # 403 = symbol not allowed on the free tier (e.g. Canadian .TO names);
+        # 429 = rate limited. Skip gracefully instead of crashing the run.
+        sym = params.get("symbol", "")
+        print(f"  Finnhub {r.status_code} for {path} {sym} — skipping.")
         return []
-    r.raise_for_status()
     return r.json()
 
 
@@ -47,7 +49,8 @@ def fetch_company(ticker: str) -> list[dict]:
 def _norm(provider: str, a: dict, tickers: list[str] | None) -> dict:
     published = a.get("datetime")
     published_at = (
-        dt.datetime.utcfromtimestamp(published).isoformat() if published else None
+        dt.datetime.fromtimestamp(published, dt.timezone.utc).isoformat()
+        if published else None
     )
     return {
         "provider": provider,
