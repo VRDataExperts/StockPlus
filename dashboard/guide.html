@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Guide</title><link rel="stylesheet" href="assets/css/app.css" /></head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="charts.html">Charts</a>
+    <a href="backtests.html">Backtests</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="news.html">News</a>
+    <a href="guide.html" class="active">Guide</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh" onclick="location.reload()">↻ Refresh</button>
+</header>
+<main class="guide">
+  <p class="tagline">Educational reference. Not financial advice. Backtests overstate live results — validate on paper before risking money.</p>
+
+  <h2>How it works</h2>
+  <p>Each strategy is a <strong>rule</strong> for when to hold a stock vs. stay in cash. The system applies these rules to price data and shows you how they did historically (Backtests), what they signal today across a universe (Opportunities), and the signals drawn on a price chart (Charts). A company-strength score and news sentiment are shown alongside to help you judge each signal.</p>
+
+  <h3>How often it changes</h3>
+  <ul>
+    <li><strong>Live prices</strong> — about every 2 minutes during market hours.</li>
+    <li><strong>News &amp; Opportunities</strong> — hourly, 7am–9pm ET on weekdays.</li>
+    <li><strong>Backtests, fundamentals, charts</strong> — once daily (4:30pm ET) and Saturday morning.</li>
+  </ul>
+  <p>Signals recompute every refresh as prices move, so the Opportunities list shifts hourly. News is context and a filter today — not an automatic trade trigger.</p>
+
+  <h2>The 5 strategies</h2>
+
+  <h3>1. Momentum — trend-following</h3>
+  <p>Ride established uptrends. <strong>Rule:</strong> hold when the 20-day average is above the 50-day average, unless RSI &gt; 75 (overbought). Wins in steady trends; whipsaws in choppy markets; lags at turns.</p>
+
+  <h3>2. Breakout — trend-following (Donchian)</h3>
+  <p>Buy strength at new highs. <strong>Rule:</strong> buy when price closes above the prior 20-day high; sell below the prior 10-day low. Catches big moves and cuts losers fast (low drawdowns); suffers false breakouts in flat markets. Often the best risk-adjusted performer here.</p>
+
+  <h3>3. Mean-reversion — counter-trend (RSI)</h3>
+  <p>Buy the dip, sell the recovery. <strong>Rule:</strong> buy when RSI &lt; 30 (oversold); exit when RSI &gt; 50. Shines in range-bound markets and bounces (protected capital in 2022); risky in real downtrends.</p>
+
+  <h3>4. MACD — trend/momentum</h3>
+  <p>Act when momentum turns up. <strong>Rule:</strong> hold when the MACD line (12- vs 26-day EMA) is above its 9-day signal line. Reacts faster than the SMA crossover; flip-flops in choppy markets.</p>
+
+  <h3>5. Bollinger — counter-trend (volatility)</h3>
+  <p>Buy when statistically cheap. <strong>Rule:</strong> bands = 20-day average ± 2 standard deviations; buy below the lower band, exit at the average. Good for volatile, mean-reverting names; struggles in sustained trends.</p>
+
+  <p class="tagline"><strong>Families:</strong> trend-followers (momentum, breakout, MACD) ride moves and sit out downtrends; mean-reverters (RSI, Bollinger) buy weakness and sell into strength.</p>
+
+  <h2>What the numbers mean</h2>
+  <ul>
+    <li><strong>Total return</strong> — overall % gain/loss.</li>
+    <li><strong>CAGR</strong> — return per year.</li>
+    <li><strong>Max drawdown</strong> — worst peak-to-trough drop (the pain measure).</li>
+    <li><strong>Sharpe</strong> — return per unit of risk; above 1 is good. Matters more than raw return.</li>
+    <li><strong>Trades</strong> — round-trips (more = more fees).</li>
+    <li><strong>Time in market</strong> — % of days holding vs. cash.</li>
+    <li><strong>Buy &amp; Hold</strong> — benchmark of simply holding.</li>
+    <li><strong>Strength</strong> — 0–100 fundamentals quality. <strong>News mood</strong> — avg recent sentiment (−1 to +1).</li>
+  </ul>
+
+  <h2>How to use the dashboard</h2>
+  <ul>
+    <li><strong>Opportunities</strong> — today's signals; filter to "Fresh buys" + "Strong companies" for a shortlist.</li>
+    <li><strong>Charts</strong> — see where a strategy buys/sells on the price, with fundamentals.</li>
+    <li><strong>Backtests</strong> — confirm historical behavior (watch the 2022 bear column).</li>
+    <li><strong>News</strong> — market-moving headlines. <strong>Overview</strong> — live prices + strategy leaderboard.</li>
+  </ul>
+
+  <h2>Honest reminders</h2>
+  <ul>
+    <li>These are mechanical rules, not predictions — no edge is guaranteed.</li>
+    <li>High Sharpe + low drawdown beats chasing the highest return.</li>
+    <li>Backtests flatter reality (no fees/slippage). Paper-trade forward first.</li>
+    <li>Diversifying across strategies with strict risk limits beats any single "best" one.</li>
+  </ul>
+</main>
+</body></html>
