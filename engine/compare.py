@@ -1,7 +1,6 @@
 """
 Run every strategy across a basket of tickers and several time windows
-(including the 2022 bear market), then write the results + equity curves
-to Supabase so the dashboard can chart them.
+(including the 2022 bear market), then write results + equity curves to Supabase.
 
 Usage:
     python engine/compare.py            # full run, writes to Supabase
@@ -9,17 +8,14 @@ Usage:
 """
 from __future__ import annotations
 import sys
-import pandas as pd
-import yfinance as yf
 
 import config
-from strategies import REGISTRY
+import data_sources
 import metrics
+from strategies import REGISTRY
 
-# US + Canadian mix. Canadian tickers use the .TO suffix.
 BASKET = ["AAPL", "MSFT", "NVDA", "SPY", "SHOP.TO", "RY.TO", "TD.TO", "XIU.TO"]
 
-# Each window: label -> kwargs passed to yf.download
 WINDOWS = {
     "5Y": {"period": "5y"},
     "2022 bear": {"start": "2022-01-01", "end": "2022-12-31"},
@@ -27,16 +23,14 @@ WINDOWS = {
 }
 
 
-def load_prices(ticker: str, dl_kwargs: dict) -> pd.DataFrame | None:
-    raw = yf.download(ticker, auto_adjust=True, progress=False, **dl_kwargs)
-    if raw is None or raw.empty:
+def load_prices(ticker, dl_kwargs):
+    df = data_sources.get_prices(ticker, **dl_kwargs)
+    if df is None or df.empty:
         return None
-    if isinstance(raw.columns, pd.MultiIndex):
-        raw.columns = raw.columns.get_level_values(0)
-    return raw.rename(columns=str.lower)[["close"]].dropna()
+    return df[["close"]].dropna()
 
 
-def main(dry: bool) -> None:
+def main(dry):
     client = None
     if not dry:
         config.require("SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
@@ -65,10 +59,8 @@ def main(dry: bool) -> None:
                 ).execute()
                 rows_written += 1
 
-    if dry:
-        print("\nDry run — nothing written.")
-    else:
-        print(f"\nWrote {rows_written} backtests to Supabase. Open the dashboard to view.")
+    print("\nDry run - nothing written." if dry
+          else f"\nWrote {rows_written} backtests to Supabase. Open the dashboard to view.")
 
 
 if __name__ == "__main__":

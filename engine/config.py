@@ -5,7 +5,7 @@ Copy .env.example -> .env and fill in your values.
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # loads .env from the project root if present
+load_dotenv()
 
 # --- Supabase ---
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
@@ -14,12 +14,16 @@ SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
 # --- News ---
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
 
+# --- Alpaca (US real-time quotes later; paper keys are fine) ---
+ALPACA_API_KEY = os.getenv("ALPACA_API_KEY", "")
+ALPACA_API_SECRET = os.getenv("ALPACA_API_SECRET", "")
+
 # --- IBKR (paper) ---
 IBKR_API_HOST = os.getenv("IBKR_API_HOST", "127.0.0.1")
-IBKR_API_PORT = int(os.getenv("IBKR_API_PORT", "4002"))  # 4002 = paper gateway
+IBKR_API_PORT = int(os.getenv("IBKR_API_PORT", "4002"))
 
 
-def require(*names: str) -> None:
+def require(*names):
     """Raise a clear error if a needed env var is missing."""
     missing = [n for n in names if not globals().get(n)]
     if missing:

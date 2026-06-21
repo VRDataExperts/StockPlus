@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Opportunities</title>
+<link rel="stylesheet" href="assets/css/app.css" />
+</head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="backtests.html">Backtests</a>
+    <a href="opportunities.html" class="active">Opportunities</a>
+    <a href="news.html">News</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh">↻ Refresh</button>
+</header>
+<main>
+  <div class="controls">
+    <label>Strategy <select id="f-strategy"></select></label>
+    <label><input type="checkbox" id="f-fresh" /> Fresh buys only</label>
+    <span class="sub" id="run-info" style="color:var(--muted)"></span>
+  </div>
+  <table id="op-table">
+    <thead><tr>
+      <th data-k="ticker">Ticker</th>
+      <th data-k="strategy">Strategy</th>
+      <th data-k="signal">Signal</th>
+      <th data-k="score">20d momentum</th>
+      <th data-k="last_price">Last price</th>
+    </tr></thead>
+    <tbody id="op-body"></tbody>
+  </table>
+  <div id="op-empty" class="empty hidden">No opportunities yet. Run <code>python engine/screen.py</code>.</div>
+</main>
+<script type="module" src="assets/js/opportunities.js"></script>
+</body>
+</html>

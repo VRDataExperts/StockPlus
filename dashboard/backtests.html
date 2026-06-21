@@ -13,19 +13,18 @@
   <nav>
     <a href="index.html">Overview</a>
     <a href="backtests.html" class="active">Backtests</a>
+    <a href="opportunities.html">Opportunities</a>
     <a href="news.html">News</a>
   </nav>
   <span class="spacer"></span>
   <button id="refresh">↻ Refresh</button>
 </header>
-
 <main>
   <div class="controls">
     <label>Period <select id="period"></select></label>
     <label>Ticker <select id="ticker"></select></label>
     <span class="sub" style="color:var(--muted)">Click a row to chart its equity curve.</span>
   </div>
-
   <table id="bt-table">
     <thead><tr>
       <th data-k="ticker">Ticker</th>
@@ -40,7 +39,6 @@
     <tbody id="bt-body"></tbody>
   </table>
   <div id="bt-empty" class="empty hidden">No backtests yet. Run <code>python engine/compare.py</code>.</div>
-
   <div class="panel">
     <div id="chart-title" class="sub" style="color:var(--muted);margin-bottom:8px">
       Select a row above to see its equity curve.
@@ -48,7 +46,6 @@
     <canvas id="curve" height="110"></canvas>
   </div>
 </main>
-
 <script type="module" src="assets/js/backtests.js"></script>
 </body>
 </html>
