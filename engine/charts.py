@@ -1,6 +1,7 @@
 """
-Per-ticker chart data: price + SMA20/50 + Bollinger bands + buy/sell markers
-for every strategy. Written to Supabase so the Charts page can render it.
+Per-ticker chart data: price + SMA20/50 + Bollinger bands + buy/sell markers.
+Stores up to ~10 years of daily points so the dashboard can offer 7D…10Y/MAX views.
+Markers are limited to the most recent ~2 years to keep the chart readable and rows small.
 
 Usage:
     python engine/charts.py            # build + write
@@ -14,7 +15,8 @@ import config
 import data_sources
 from strategies import REGISTRY
 
-TAIL = 250  # ~1 trading year of daily points
+POINT_TAIL = 2600   # ~10 trading years of price points
+MARKER_TAIL = 504   # ~2 years of signal markers
 
 
 def _r(x):
@@ -22,7 +24,7 @@ def _r(x):
 
 
 def build(ticker: str):
-    df = data_sources.get_prices(ticker, period="1y")
+    df = data_sources.get_prices(ticker, period="max")
     if df is None or len(df) < 60:
         return None
     close = df["close"]
@@ -30,19 +32,20 @@ def build(ticker: str):
     sma50 = close.rolling(50).mean()
     std = close.rolling(20).std()
     bb_up, bb_lo = sma20 + 2 * std, sma20 - 2 * std
-    tail = df.index[-TAIL:]
 
+    tail = df.index[-POINT_TAIL:]
     points = [{
         "t": str(t.date()), "close": _r(close[t]), "sma20": _r(sma20[t]),
         "sma50": _r(sma50[t]), "bb_up": _r(bb_up[t]), "bb_lo": _r(bb_lo[t]),
     } for t in tail]
 
+    point_set = set(tail)
+    marker_set = set(df.index[-MARKER_TAIL:])
     markers = []
-    tailset = set(tail)
     for sname, fn in REGISTRY.items():
         chg = fn(df).reindex(df.index).fillna(0).diff()
         for t in df.index[chg != 0]:
-            if t in tailset:
+            if t in marker_set and t in point_set:
                 markers.append({
                     "t": str(t.date()),
                     "side": "buy" if chg.loc[t] > 0 else "sell",
@@ -55,7 +58,7 @@ def main(dry: bool):
     from screen import UNIVERSE
     if dry:
         c = build("AAPL")
-        print(f"AAPL: {len(c['points'])} points, {len(c['markers'])} markers (sample)")
+        print(f"AAPL: {len(c['points'])} points, {len(c['markers'])} markers")
         print("\nDry run - nothing written.")
         return
     config.require("SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")

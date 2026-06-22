@@ -107,3 +107,19 @@ th[title], .help[title] { cursor: help; }
   margin-right:6px; vertical-align:middle; }
 .side-panel .tri { font-size:12px; vertical-align:middle; margin-right:4px; }
 @media (max-width:900px){ .chart-layout{ flex-direction:column; } .side-panel{ flex:auto; width:100%; } }
+
+/* charts explainer as a full-width 3-column band under the chart */
+.explainer { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:16px 28px; font-size:13px; line-height:1.5; }
+.explainer h4 { margin:0 0 6px; font-size:13px; color:var(--accent); }
+.explainer p { margin:6px 0; }
+.explainer .sw { display:inline-block; width:12px; height:12px; border-radius:2px;
+  margin-right:6px; vertical-align:middle; }
+.explainer .tri { vertical-align:middle; margin-right:4px; }
+.explainer .note { color:var(--muted); grid-column:1/-1; }
+
+/* chart range buttons + enlarge */
+.range { display:inline-flex; gap:4px; }
+.range-btn { padding:5px 10px; }
+.range-btn.active { border-color:var(--accent); color:var(--text); }
+.big-canvas-wrap { height:72vh; }

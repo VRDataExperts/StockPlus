@@ -20,35 +20,62 @@
   <div class="controls">
     <label>Ticker <select id="ticker"></select></label>
     <label>Signals <select id="mstrat"></select></label>
+    <button id="enlarge">⤢ Enlarge</button>
     <span class="sub" id="info" style="color:var(--muted)"></span>
   </div>
-
-  <div class="chart-layout">
-    <div class="panel chart-box"><canvas id="px" height="120"></canvas></div>
-
-    <aside class="panel side-panel">
-      <h4>What each line means</h4>
-      <p><span class="sw" style="background:#e6edf3"></span><strong>Close</strong> — the stock's actual daily price. This is what you'd pay.</p>
-      <p><span class="sw" style="background:#58a6ff"></span><strong>SMA 20</strong> — average price of the last 20 days (≈1 month). Shows the <em>short-term</em> trend.</p>
-      <p><span class="sw" style="background:#d29922"></span><strong>SMA 50</strong> — average of the last 50 days (≈2.5 months). The <em>medium-term</em> trend.</p>
-      <p><span class="sw" style="background:#3fb950"></span><strong>Bollinger bands</strong> (dashed) — SMA20 plus/minus 2 standard deviations. They widen when the stock is volatile and squeeze when calm.</p>
-      <p><span class="tri" style="color:#3fb950">▲</span><strong>Buy</strong> / <span class="tri" style="color:#f85149">▼</span><strong>Sell</strong> — where the selected strategy would have entered/exited.</p>
-
-      <h4>How to read it</h4>
-      <p><strong>Uptrend (bullish):</strong> price above both averages, and SMA20 above SMA50, both sloping up. Trend strategies want to be long here.</p>
-      <p><strong>Downtrend (bearish):</strong> price below the averages and SMA20 below SMA50. Trend strategies stay in cash.</p>
-      <p><strong>At the lower band:</strong> price is unusually cheap/oversold — a possible mean-reversion <em>buy</em> (expect a bounce).</p>
-      <p><strong>At/above the upper band:</strong> price is stretched/expensive — strong trend, but risky to chase; a pullback is common.</p>
-
-      <h4>Is it a good buy?</h4>
-      <p><strong>Higher confidence:</strong> uptrend (SMA20&gt;SMA50) + a fresh green ▲ + strong fundamentals + price <em>not</em> far above the upper band.</p>
-      <p><strong>Be cautious:</strong> price way above the upper band (overbought), or breaking below a falling SMA50 (trend weakening), or weak company score.</p>
-      <p class="sub" style="color:var(--muted)">This describes how the indicators work — it is not advice. Signals fail often; size small and validate.</p>
-    </aside>
+  <div class="controls" style="margin-top:-4px">
+    <span class="range">
+      <button class="range-btn" data-r="7D">7D</button>
+      <button class="range-btn" data-r="15D">15D</button>
+      <button class="range-btn" data-r="1M">1M</button>
+      <button class="range-btn" data-r="3M">3M</button>
+      <button class="range-btn" data-r="6M">6M</button>
+      <button class="range-btn active" data-r="1Y">1Y</button>
+      <button class="range-btn" data-r="2Y">2Y</button>
+      <button class="range-btn" data-r="5Y">5Y</button>
+      <button class="range-btn" data-r="10Y">10Y</button>
+      <button class="range-btn" data-r="MAX">MAX</button>
+    </span>
   </div>
 
-  <div id="fund" class="cards" style="margin-top:18px"></div>
+  <div class="panel"><canvas id="px" height="105"></canvas></div>
+
+  <div id="fund" class="cards" style="margin-top:16px"></div>
+
+  <div class="panel explainer" style="margin-top:16px">
+    <div>
+      <h4>What each line means</h4>
+      <p><span class="sw" style="background:#e6edf3"></span><strong>Close</strong> — the stock's actual daily price. What you'd pay.</p>
+      <p><span class="sw" style="background:#58a6ff"></span><strong>SMA 20</strong> — average of the last 20 days (≈1 month); the short-term trend.</p>
+      <p><span class="sw" style="background:#d29922"></span><strong>SMA 50</strong> — average of the last 50 days (≈2.5 months); the medium-term trend.</p>
+      <p><span class="sw" style="background:#3fb950"></span><strong>Bollinger bands</strong> (dashed) — SMA20 ± 2 standard deviations; widen when volatile, squeeze when calm.</p>
+      <p><span class="tri" style="color:#3fb950">▲</span><strong>Buy</strong> / <span class="tri" style="color:#f85149">▼</span><strong>Sell</strong> — where the selected strategy entered/exited (recent ~2 years).</p>
+    </div>
+    <div>
+      <h4>How to read it</h4>
+      <p><strong>Uptrend (bullish):</strong> price above both averages, SMA20 above SMA50, both sloping up. Trend strategies want to be long.</p>
+      <p><strong>Downtrend (bearish):</strong> price below the averages, SMA20 below SMA50. Trend strategies stay in cash.</p>
+      <p><strong>At the lower band:</strong> unusually cheap/oversold — a possible mean-reversion buy (expect a bounce).</p>
+      <p><strong>At/above the upper band:</strong> stretched/expensive — strong trend but risky to chase; a pullback is common.</p>
+    </div>
+    <div>
+      <h4>Is it a good buy?</h4>
+      <p><strong>Higher confidence:</strong> uptrend (SMA20&gt;SMA50) + a fresh green ▲ + strong fundamentals + price not far above the upper band.</p>
+      <p><strong>Be cautious:</strong> price way above the upper band (overbought), breaking below a falling SMA50 (trend weakening), or a weak company score.</p>
+    </div>
+    <p class="note">This describes how the indicators work — it is not advice. Signals fail often; size small and validate.</p>
+  </div>
+
   <div id="charts-empty" class="empty hidden">No chart data yet. Run <code>python engine/charts.py</code>.</div>
 </main>
+
+<div id="big-backdrop" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:1150px">
+    <button id="big-close" class="modal-close" aria-label="Close">×</button>
+    <h3 id="big-title"></h3>
+    <div class="big-canvas-wrap"><canvas id="px-big"></canvas></div>
+  </div>
+</div>
+
 <script type="module" src="assets/js/charts.js"></script>
 </body></html>
