@@ -22,7 +22,7 @@ def _step(name, fn):
 
 
 def main(light: bool):
-    import news_ingest, screen
+    import news_ingest, screen, movers
     if not light:
         import fundamentals, compare, charts
         _step("fundamentals", lambda: fundamentals.main(dry=False))
@@ -31,6 +31,7 @@ def main(light: bool):
         _step("backtests", lambda: compare.main(dry=False))
         _step("charts", lambda: charts.main(dry=False))
     _step("screener", lambda: screen.main(dry=False))
+    _step("movers", lambda: movers.main(dry=False))
     print(f"\n{'Light' if light else 'Full'} refresh complete.")
 
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StocksPlus — Movers</title><link rel="stylesheet" href="assets/css/app.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+<body>
+<header>
+  <span class="brand">📈 StocksPlus</span>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="charts.html">Charts</a>
+    <a href="backtests.html">Backtests</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="movers.html" class="active">Movers</a>
+    <a href="news.html">News</a>
+    <a href="guide.html">Guide</a>
+  </nav>
+  <span class="spacer"></span>
+  <button id="refresh" onclick="location.reload()">↻ Refresh</button>
+</header>
+<main>
+  <div class="warn">⚠ Higher risk: these are lower-priced, more volatile names. Short-term signals on daily data — not tick-level day trading. Educational only, not advice. Size small.</div>
+
+  <div class="controls">
+    <label>Horizon <select id="f-hz"><option value="">All</option><option>day</option><option>week</option><option>month</option></select></label>
+    <label>Strategy <select id="f-strategy"></select></label>
+    <label>Min confidence <select id="f-conf"><option value="0">Any</option><option value="50">≥ 50</option><option value="70">≥ 70</option></select></label>
+    <label><input type="checkbox" id="f-fresh" /> Fresh buys only</label>
+    <span class="sub" id="run-info" style="color:var(--muted)"></span>
+  </div>
+  <p class="sub" style="color:var(--muted);margin:-4px 0 10px">Click any row for its chart and a plain-English read.</p>
+
+  <table id="mv-table"><thead><tr>
+    <th data-k="ticker" title="Stock symbol">Ticker</th>
+    <th data-k="horizon" title="day = fast/short-swing, week = medium, month = slower settings">Horizon</th>
+    <th data-k="strategy" title="Which rule fired">Strategy</th>
+    <th data-k="signal" title="Buy = just triggered; Hold-long = already long">Signal</th>
+    <th data-k="confidence" title="0-100 blend of trend, momentum, volume surge, RSI and news sentiment. Higher = stronger setup (not a guarantee)">Confidence</th>
+    <th data-k="volatility" title="Annualized volatility — how violently it swings. Higher = riskier">Volatility</th>
+    <th data-k="momentum" title="Price change over the last ~20 trading days">20d mom</th>
+    <th data-k="sentiment" title="Average recent news sentiment, -1 to +1">News</th>
+    <th data-k="last_price" title="Most recent price">Price</th>
+  </tr></thead><tbody id="mv-body"></tbody></table>
+  <div id="mv-empty" class="empty hidden">No movers yet. Run <code>python engine/movers.py</code>.</div>
+
+  <div class="panel explainer" style="margin-top:18px">
+    <div>
+      <h4>What the horizons mean</h4>
+      <p><strong>Day</strong> — fastest settings (≈3/8-day averages); reacts quickest, most false signals. Hold days.</p>
+      <p><strong>Week</strong> — medium settings (≈5/15-day); balances speed and noise. Hold ~1–3 weeks.</p>
+      <p><strong>Month</strong> — slower settings (≈20/50-day); fewer, steadier signals. Hold weeks–months.</p>
+    </div>
+    <div>
+      <h4>How confidence is scored</h4>
+      <p>Starts at 50, then adjusts for: <strong>trend</strong> (price vs its averages), <strong>momentum</strong> (recent return), <strong>volume surge</strong> (unusual buying), <strong>RSI</strong> (penalty if overbought), and <strong>news sentiment</strong>. A fresh buy adds a little.</p>
+      <p><strong>≥70</strong> = strong alignment. <strong>50–69</strong> = mixed. <strong>&lt;50</strong> = weak — caution.</p>
+    </div>
+    <div>
+      <h4>Why / when to be careful</h4>
+      <p>Volatile, low-priced stocks can move 10%+ in a day — great for gains, brutal on losses. High volatility = wide stops and small position sizes.</p>
+      <p>Confidence is a setup score, <strong>not a prediction</strong>. Many signals fail. Always decide your exit before entering, and never risk more than you can lose.</p>
+    </div>
+  </div>
+</main>
+<script type="module" src="assets/js/movers.js"></script>
+</body></html>

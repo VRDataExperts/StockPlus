@@ -53,7 +53,9 @@ def strength_score(d: dict) -> int:
 
 
 def main(dry: bool):
-    from screen import UNIVERSE
+    from screen import UNIVERSE as SU
+    from movers import UNIVERSE as MU
+    UNIVERSE = list(dict.fromkeys(SU + MU))
     rows = []
     for t in UNIVERSE:
         d = get_fundamentals(t)

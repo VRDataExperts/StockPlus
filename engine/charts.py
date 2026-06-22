@@ -55,7 +55,9 @@ def build(ticker: str):
 
 
 def main(dry: bool):
-    from screen import UNIVERSE
+    from screen import UNIVERSE as SU
+    from movers import UNIVERSE as MU
+    UNIVERSE = list(dict.fromkeys(SU + MU))
     if dry:
         c = build("AAPL")
         print(f"AAPL: {len(c['points'])} points, {len(c['markers'])} markers")
