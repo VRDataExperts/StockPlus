@@ -58,7 +58,7 @@ function render() {
     </tr>`).join('');
   document.querySelectorAll('#mv-body tr').forEach(tr => tr.onclick = () => {
     const r = view[+tr.dataset.i];
-    openTickerModal(r.ticker, { strategy: r.strategy, signal: r.signal, score: r.momentum, sentiment: r.sentiment });
+    openTickerModal(r.ticker, { strategy: r.strategy, signal: r.signal, score: r.momentum, sentiment: r.sentiment, confidence: r.confidence, volatility: r.volatility, horizon: r.horizon });
   });
 }
 
