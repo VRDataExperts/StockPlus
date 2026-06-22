@@ -95,3 +95,15 @@ th[title], .help[title] { cursor: help; }
 
 /* ensure hidden modal stays hidden (beats .modal-backdrop display:flex) */
 .modal-backdrop.hidden { display:none !important; }
+
+/* charts page: chart + side explainer */
+.chart-layout { display:flex; gap:16px; align-items:flex-start; }
+.chart-box { flex:1 1 600px; min-width:0; }
+.side-panel { flex:0 0 320px; font-size:13px; line-height:1.5; }
+.side-panel h4 { margin:14px 0 4px; font-size:13px; color:var(--accent); }
+.side-panel h4:first-child { margin-top:0; }
+.side-panel p { margin:6px 0; }
+.side-panel .sw { display:inline-block; width:12px; height:12px; border-radius:2px;
+  margin-right:6px; vertical-align:middle; }
+.side-panel .tri { font-size:12px; vertical-align:middle; margin-right:4px; }
+@media (max-width:900px){ .chart-layout{ flex-direction:column; } .side-panel{ flex:auto; width:100%; } }

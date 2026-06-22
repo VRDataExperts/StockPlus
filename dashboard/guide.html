@@ -16,64 +16,94 @@
   <button id="refresh" onclick="location.reload()">↻ Refresh</button>
 </header>
 <main class="guide">
-  <p class="tagline">Educational reference. Not financial advice. Backtests overstate live results — validate on paper before risking money.</p>
+  <p class="tagline">A plain-English handbook. Educational only — not financial advice. Backtests overstate real results; paper-trade before risking money.</p>
 
-  <h2>How it works</h2>
-  <p>Each strategy is a <strong>rule</strong> for when to hold a stock vs. stay in cash. The system applies these rules to price data and shows you how they did historically (Backtests), what they signal today across a universe (Opportunities), and the signals drawn on a price chart (Charts). A company-strength score and news sentiment are shown alongside to help you judge each signal.</p>
+  <h2>1. The big idea</h2>
+  <p>A <strong>strategy</strong> is just a rule that answers one question every day: <em>should I be holding this stock, or sitting in cash?</em> The system applies five such rules to price history and shows you three things: how each rule did in the past (<strong>Backtests</strong>), what each rule signals today across ~40 stocks (<strong>Opportunities</strong>), and the signals drawn on a price chart (<strong>Charts</strong>). Alongside, it shows a <strong>company-strength score</strong> (from fundamentals) and <strong>news sentiment</strong> to help you judge a signal.</p>
 
-  <h3>How often it changes</h3>
+  <h3>How often the data changes</h3>
   <ul>
     <li><strong>Live prices</strong> — about every 2 minutes during market hours.</li>
     <li><strong>News &amp; Opportunities</strong> — hourly, 7am–9pm ET on weekdays.</li>
     <li><strong>Backtests, fundamentals, charts</strong> — once daily (4:30pm ET) and Saturday morning.</li>
   </ul>
-  <p>Signals recompute every refresh as prices move, so the Opportunities list shifts hourly. News is context and a filter today — not an automatic trade trigger.</p>
 
-  <h2>The 5 strategies</h2>
+  <h2>2. How to read a price chart</h2>
+  <p><strong>Close (white line):</strong> the stock's actual closing price each day — what you would pay.</p>
+  <p><strong>SMA20 (blue) &amp; SMA50 (orange):</strong> "Simple Moving Averages." SMA20 is the average of the last 20 closing prices; SMA50 the last 50. They smooth out daily noise so you can see the trend. <em>Example:</em> if AAPL's last 20 closes average $290 and its last 50 average $270, the short-term average ($290) is above the long-term ($270) — that's an <strong>uptrend</strong>.</p>
+  <p><strong>Bollinger Bands (green dashed):</strong> SMA20 plus/minus 2 standard deviations. They measure how far price has stretched from its average. Near the <em>lower</em> band = unusually cheap (oversold); near the <em>upper</em> band = unusually expensive (overbought). Bands widen in volatile times, squeeze when calm.</p>
+  <p><strong>Green ▲ / red ▼:</strong> where the selected strategy would have bought and sold.</p>
+  <p><strong>Reading the trend:</strong> price above both averages with SMA20 over SMA50 and both rising = bullish. The reverse = bearish. Price hugging the upper band = strong momentum (but risky to chase); price at the lower band in an otherwise healthy stock = a possible bounce.</p>
 
-  <h3>1. Momentum — trend-following</h3>
-  <p>Ride established uptrends. <strong>Rule:</strong> hold when the 20-day average is above the 50-day average, unless RSI &gt; 75 (overbought). Wins in steady trends; whipsaws in choppy markets; lags at turns.</p>
+  <h2>3. The five strategies — with examples</h2>
 
-  <h3>2. Breakout — trend-following (Donchian)</h3>
-  <p>Buy strength at new highs. <strong>Rule:</strong> buy when price closes above the prior 20-day high; sell below the prior 10-day low. Catches big moves and cuts losers fast (low drawdowns); suffers false breakouts in flat markets. Often the best risk-adjusted performer here.</p>
+  <h3>Momentum (trend-following)</h3>
+  <p><strong>Rule:</strong> hold when SMA20 &gt; SMA50, unless RSI &gt; 75 (overheated). <em>Example:</em> SMA20 crosses above SMA50 on MSFT → buy; it stays long until SMA20 drops back below SMA50. <strong>Good:</strong> steady, sustained trends. <strong>Bad:</strong> choppy markets (it gets whipsawed in and out), and it's late to react at turning points.</p>
 
-  <h3>3. Mean-reversion — counter-trend (RSI)</h3>
-  <p>Buy the dip, sell the recovery. <strong>Rule:</strong> buy when RSI &lt; 30 (oversold); exit when RSI &gt; 50. Shines in range-bound markets and bounces (protected capital in 2022); risky in real downtrends.</p>
+  <h3>Breakout (trend-following, Donchian channel)</h3>
+  <p><strong>Rule:</strong> buy when price closes above its highest price of the last 20 days; sell when it closes below the lowest of the last 10 days. <em>Example:</em> NVDA's prior 20-day high was $130; it closes at $131 → breakout buy. <strong>Good:</strong> catches big sustained moves and cuts losers fast (low drawdowns). <strong>Bad:</strong> "false breakouts" in sideways markets — it buys the pop, then price falls back.</p>
 
-  <h3>4. MACD — trend/momentum</h3>
-  <p>Act when momentum turns up. <strong>Rule:</strong> hold when the MACD line (12- vs 26-day EMA) is above its 9-day signal line. Reacts faster than the SMA crossover; flip-flops in choppy markets.</p>
+  <h3>Mean-reversion (counter-trend, RSI)</h3>
+  <p><strong>Rule:</strong> buy when RSI &lt; 30 (oversold); sell when RSI &gt; 50 (recovered). <em>Example:</em> a stock drops hard, RSI hits 28 → buy expecting a bounce; sell when RSI climbs back to 50. <strong>Good:</strong> range-bound markets and rebounds (it protected capital in the 2022 downturn). <strong>Bad:</strong> strong downtrends — buying an "oversold" stock that keeps falling is "catching a falling knife."</p>
 
-  <h3>5. Bollinger — counter-trend (volatility)</h3>
-  <p>Buy when statistically cheap. <strong>Rule:</strong> bands = 20-day average ± 2 standard deviations; buy below the lower band, exit at the average. Good for volatile, mean-reverting names; struggles in sustained trends.</p>
+  <h3>MACD (trend/momentum)</h3>
+  <p><strong>Rule:</strong> hold when the MACD line (12-day EMA minus 26-day EMA) is above its 9-day signal line. EMA = Exponential Moving Average, a moving average that weights recent days more. <strong>Good:</strong> trends, and it reacts faster than the SMA crossover. <strong>Bad:</strong> flip-flops in choppy markets.</p>
 
-  <p class="tagline"><strong>Families:</strong> trend-followers (momentum, breakout, MACD) ride moves and sit out downtrends; mean-reverters (RSI, Bollinger) buy weakness and sell into strength.</p>
+  <h3>Bollinger (counter-trend, volatility)</h3>
+  <p><strong>Rule:</strong> buy when price closes below the lower band (statistically cheap); sell when it returns to the middle (SMA20). <strong>Good:</strong> volatile, mean-reverting names. <strong>Bad:</strong> strong trends — in a powerful move, price can ride a band for weeks.</p>
 
-  <h2>What the numbers mean</h2>
+  <p><strong>Two families:</strong> trend-followers (momentum, breakout, MACD) ride moves and sit out downtrends — they tend to win big in bull runs and protect in bears, but give up some upside. Mean-reverters (RSI, Bollinger) buy weakness and sell into strength — great in choppy markets, dangerous in real downtrends.</p>
+
+  <h2>4. Technical terms — defined with examples</h2>
   <ul>
-    <li><strong>Total return</strong> — overall % gain/loss.</li>
-    <li><strong>CAGR</strong> — return per year.</li>
-    <li><strong>Max drawdown</strong> — worst peak-to-trough drop (the pain measure).</li>
-    <li><strong>Sharpe</strong> — return per unit of risk; above 1 is good. Matters more than raw return.</li>
-    <li><strong>Trades</strong> — round-trips (more = more fees).</li>
-    <li><strong>Time in market</strong> — % of days holding vs. cash.</li>
-    <li><strong>Buy &amp; Hold</strong> — benchmark of simply holding.</li>
-    <li><strong>Strength</strong> — 0–100 fundamentals quality. <strong>News mood</strong> — avg recent sentiment (−1 to +1).</li>
+    <li><strong>Moving Average (SMA/EMA):</strong> the average price over N days, recalculated daily. Smooths noise to reveal trend. EMA reacts faster (weights recent days).</li>
+    <li><strong>RSI (Relative Strength Index):</strong> a 0–100 gauge of recent up- vs down-moves. Below 30 = oversold (beaten down); above 70 = overbought (stretched). <em>Example:</em> RSI 25 means heavy recent selling — possible bounce.</li>
+    <li><strong>MACD:</strong> difference between a fast and slow EMA; crossing its signal line flags momentum turning up or down.</li>
+    <li><strong>Bollinger Bands / Standard deviation:</strong> std-dev measures how spread out prices are (volatility). Wide bands = jumpy stock; narrow = calm.</li>
+    <li><strong>Donchian channel:</strong> the highest high and lowest low over a lookback window — the basis of the breakout rule.</li>
+    <li><strong>Overbought / Oversold:</strong> stretched far above / below normal — prone to a pullback / bounce, though not guaranteed.</li>
+    <li><strong>Momentum vs Mean-reversion:</strong> momentum bets that what's rising keeps rising; mean-reversion bets that extremes snap back to average.</li>
   </ul>
 
-  <h2>How to use the dashboard</h2>
+  <h2>5. The dashboard metrics — what good looks like</h2>
   <ul>
-    <li><strong>Opportunities</strong> — today's signals; filter to "Fresh buys" + "Strong companies" for a shortlist.</li>
-    <li><strong>Charts</strong> — see where a strategy buys/sells on the price, with fundamentals.</li>
-    <li><strong>Backtests</strong> — confirm historical behavior (watch the 2022 bear column).</li>
-    <li><strong>News</strong> — market-moving headlines. <strong>Overview</strong> — live prices + strategy leaderboard.</li>
+    <li><strong>Total return:</strong> overall % gain/loss over the period. <em>+50% means $100 became $150.</em></li>
+    <li><strong>CAGR:</strong> return expressed per year. <em>+20% CAGR ≈ doubling every ~3.6 years.</em></li>
+    <li><strong>Max drawdown:</strong> worst peak-to-trough fall — the "how much pain" number. <em>−40% means at the worst point you were down 40% from the high.</em> Smaller (closer to 0) is better.</li>
+    <li><strong>Sharpe ratio:</strong> return per unit of risk. <strong>Above 1 = good; above 2 = excellent; below 0 = lost money risk-adjusted.</strong> This matters more than raw return — it rewards smooth gains over wild swings.</li>
+    <li><strong>Trades:</strong> number of buy/sell round-trips. More trades = more commissions and slippage eating returns.</li>
+    <li><strong>Time in market:</strong> % of days actually holding vs in cash. Low % with decent returns = efficient (and you were exposed to less risk).</li>
+    <li><strong>Buy &amp; Hold:</strong> the benchmark — what you'd get just buying and never selling. A strategy earns its keep only if it beats this on a risk-adjusted basis or cuts drawdown meaningfully.</li>
   </ul>
 
-  <h2>Honest reminders</h2>
+  <h2>6. Company strength (fundamentals) — why it matters</h2>
+  <p>Technical signals say <em>when</em>; fundamentals say <em>whether the business is any good</em>. Buying signals on financially strong companies is generally safer than on weak ones.</p>
   <ul>
-    <li>These are mechanical rules, not predictions — no edge is guaranteed.</li>
-    <li>High Sharpe + low drawdown beats chasing the highest return.</li>
-    <li>Backtests flatter reality (no fees/slippage). Paper-trade forward first.</li>
-    <li>Diversifying across strategies with strict risk limits beats any single "best" one.</li>
+    <li><strong>Strength score (0–100):</strong> our blended quality score. ≥65 = solid; &lt;40 = weak.</li>
+    <li><strong>Profit margin:</strong> profit kept per dollar of sales. <em>25% means $0.25 profit per $1 of revenue.</em> Higher = more efficient.</li>
+    <li><strong>ROE (Return on Equity):</strong> profit generated per dollar of shareholder money. Higher = better use of capital (15%+ is strong).</li>
+    <li><strong>Revenue growth:</strong> how fast sales are rising year over year. Positive and accelerating is good.</li>
+    <li><strong>Debt-to-equity:</strong> how much the company borrows vs its own capital. Lower = safer; very high debt is risky in downturns.</li>
+    <li><strong>P/E (Price-to-Earnings):</strong> price divided by annual earnings per share — how many years of earnings you're paying for. <em>P/E 30 = paying 30× earnings.</em> High P/E = priced for growth (riskier if growth slows); low P/E = cheaper but maybe for a reason.</li>
+  </ul>
+
+  <h2>7. News &amp; sentiment</h2>
+  <p>The News page pulls market headlines; each is scored for <strong>sentiment</strong> from −1 (very negative) to +1 (very positive) using keywords. On Opportunities, "News mood" is the average for that stock. Use it as <em>context</em> — a buy signal with strongly negative news deserves a second look. (Note: news doesn't auto-trigger trades here, and no feed shows news before it's public.)</p>
+
+  <h2>8. Using each page</h2>
+  <ul>
+    <li><strong>Opportunities:</strong> today's signals. Tick "Fresh buys only" + "Strong companies only" for a high-conviction shortlist; click a row for a chart + plain-English read.</li>
+    <li><strong>Charts:</strong> pick a ticker, choose a strategy, and see exactly where it bought/sold, with the explainer panel on the right.</li>
+    <li><strong>Backtests:</strong> confirm a strategy's historical behavior on that stock — especially the <em>2022 bear</em> column for how it handles downturns.</li>
+    <li><strong>Overview:</strong> live prices + the strategy leaderboard (which rule is strongest risk-adjusted).</li>
+  </ul>
+
+  <h2>9. Honest reminders</h2>
+  <ul>
+    <li>These are mechanical rules, not predictions. No strategy guarantees profit.</li>
+    <li>Prefer <strong>high Sharpe + low drawdown</strong> over the flashiest return.</li>
+    <li>Backtests ignore fees, slippage, and timing — real results are worse. Always paper-trade forward first.</li>
+    <li>Spread risk across strategies and stocks, size positions small, and decide your exit before you enter.</li>
   </ul>
 </main>
 </body></html>
