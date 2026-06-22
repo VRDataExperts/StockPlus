@@ -92,3 +92,6 @@ th[title], .help[title] { cursor: help; }
 .explain { margin:14px 0; }
 .explain p { line-height:1.5; margin:8px 0; }
 .explain strong { color:var(--text); }
+
+/* ensure hidden modal stays hidden (beats .modal-backdrop display:flex) */
+.modal-backdrop.hidden { display:none !important; }
